@@ -99,7 +99,6 @@ require (
 	github.com/dgryski/go-metro v0.0.0-20211217172704-adc40b04c140 // indirect
 	github.com/dimchansky/utfbom v1.1.1 // indirect
 	github.com/dnsimple/dnsimple-go/v4 v4.0.0 // indirect
-	github.com/ebitengine/purego v0.9.1 // indirect
 	github.com/exoscale/egoscale/v3 v3.1.24 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
@@ -200,7 +199,6 @@ require (
 	github.com/nrdcg/oci-go-sdk/dns/v1065 v1065.95.2 // indirect
 	github.com/nrdcg/porkbun v0.4.0 // indirect
 	github.com/nzdjb/go-metaname v1.0.0 // indirect
-	github.com/openai/openai-go/v3 v3.15.0 // indirect
 	github.com/ovh/go-ovh v1.9.0 // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
 	github.com/pelletier/go-toml/v2 v2.2.2 // indirect
@@ -224,30 +222,6 @@ require (
 	github.com/safchain/ethtool v0.3.0 // indirect
 	github.com/sagernet/bbolt v0.0.0-20231014093535-ea5cb2fe9f0a // indirect
 	github.com/sagernet/cors v1.2.1 // indirect
-	github.com/sagernet/cronet-go v0.0.0-20251231120443-1d2d7341cbd8 // indirect
-	github.com/sagernet/cronet-go/all v0.0.0-20251231120443-1d2d7341cbd8 // indirect
-	github.com/sagernet/cronet-go/lib/android_386 v0.0.0-20251231115934-b87a9ae9bd80 // indirect
-	github.com/sagernet/cronet-go/lib/android_amd64 v0.0.0-20251231115934-b87a9ae9bd80 // indirect
-	github.com/sagernet/cronet-go/lib/android_arm v0.0.0-20251231115934-b87a9ae9bd80 // indirect
-	github.com/sagernet/cronet-go/lib/android_arm64 v0.0.0-20251231115934-b87a9ae9bd80 // indirect
-	github.com/sagernet/cronet-go/lib/darwin_amd64 v0.0.0-20251231115934-b87a9ae9bd80 // indirect
-	github.com/sagernet/cronet-go/lib/darwin_arm64 v0.0.0-20251231115934-b87a9ae9bd80 // indirect
-	github.com/sagernet/cronet-go/lib/ios_amd64_simulator v0.0.0-20251231115934-b87a9ae9bd80 // indirect
-	github.com/sagernet/cronet-go/lib/ios_arm64 v0.0.0-20251231115934-b87a9ae9bd80 // indirect
-	github.com/sagernet/cronet-go/lib/ios_arm64_simulator v0.0.0-20251231115934-b87a9ae9bd80 // indirect
-	github.com/sagernet/cronet-go/lib/linux_386 v0.0.0-20251231115934-b87a9ae9bd80 // indirect
-	github.com/sagernet/cronet-go/lib/linux_386_musl v0.0.0-20251231115934-b87a9ae9bd80 // indirect
-	github.com/sagernet/cronet-go/lib/linux_amd64 v0.0.0-20251231115934-b87a9ae9bd80 // indirect
-	github.com/sagernet/cronet-go/lib/linux_amd64_musl v0.0.0-20251231115934-b87a9ae9bd80 // indirect
-	github.com/sagernet/cronet-go/lib/linux_arm v0.0.0-20251231115934-b87a9ae9bd80 // indirect
-	github.com/sagernet/cronet-go/lib/linux_arm64 v0.0.0-20251231115934-b87a9ae9bd80 // indirect
-	github.com/sagernet/cronet-go/lib/linux_arm64_musl v0.0.0-20251231115934-b87a9ae9bd80 // indirect
-	github.com/sagernet/cronet-go/lib/linux_arm_musl v0.0.0-20251231115934-b87a9ae9bd80 // indirect
-	github.com/sagernet/cronet-go/lib/tvos_amd64_simulator v0.0.0-20251231115934-b87a9ae9bd80 // indirect
-	github.com/sagernet/cronet-go/lib/tvos_arm64 v0.0.0-20251231115934-b87a9ae9bd80 // indirect
-	github.com/sagernet/cronet-go/lib/tvos_arm64_simulator v0.0.0-20251231115934-b87a9ae9bd80 // indirect
-	github.com/sagernet/cronet-go/lib/windows_amd64 v0.0.0-20251231115934-b87a9ae9bd80 // indirect
-	github.com/sagernet/cronet-go/lib/windows_arm64 v0.0.0-20251231115934-b87a9ae9bd80 // indirect
 	github.com/sagernet/fswatch v0.1.1 // indirect
 	github.com/sagernet/gvisor v0.0.0-20250811-sing-box-mod.1 // indirect
 	github.com/sagernet/netlink v0.0.0-20240612041022-b9a21c07ac6a // indirect
@@ -307,6 +281,7 @@ require (
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/volcengine/volc-sdk-golang v1.0.216 // indirect
 	github.com/vultr/govultr/v3 v3.21.1 // indirect
+	github.com/wyx2685/sing-vmess v0.0.0-20250723121437-95d5ab59ff92 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	github.com/xtls/reality v0.0.0-20251014195629-e4eec4520535 // indirect
 	github.com/yandex-cloud/go-genproto v0.14.0 // indirect
@@ -351,6 +326,6 @@ require (
 	lukechampine.com/blake3 v1.4.1 // indirect
 )
 
-replace github.com/sagernet/sing-box v1.13.0 => github.com/KexiChanProjectProxy/sing-box_mod v1.13.0-beta.1-mod.1
+replace github.com/sagernet/sing-box v1.13.0 => github.com/KexiChanProjectProxy/sing-box_mod v0.0.0-20260109082900-178f8f6b4093
 
 replace github.com/xtls/xray-core v1.251202.0 => github.com/wyx2685/xray-core v0.0.0-20251202200223-63db1dc9e9e2
