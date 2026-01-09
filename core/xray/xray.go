@@ -1,11 +1,10 @@
 package xray
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"sync"
-
-	"encoding/json/v2"
 
 	"github.com/InazumaV/V2bX/conf"
 	vCore "github.com/InazumaV/V2bX/core"
