@@ -55,7 +55,8 @@ func (c *Client) GetUserList() ([]UserInfo, error) {
 			return nil, fmt.Errorf("decode user list error: %w", err)
 		}
 	} else {
-		if err := json.Unmarshal(r.Body(), userlist); err != nil {
+		decoder := json.NewDecoder(r.RawResponse.Body)
+		if err := decoder.Decode(userlist); err != nil {
 			return nil, fmt.Errorf("decode user list error: %w", err)
 		}
 	}
