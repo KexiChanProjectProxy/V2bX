@@ -35,6 +35,7 @@ type SingOptions struct {
 	TCPFastOpen              bool                   `json:"EnableTFO"`
 	SniffEnabled             bool                   `json:"EnableSniff"`
 	SniffOverrideDestination bool                   `json:"SniffOverrideDestination"`
+	RevertOriginDst          bool                   `json:"RevertOriginDst"`
 	EnableDNS                bool                   `json:"EnableDNS"`
 	DomainStrategy           option.DomainStrategy  `json:"DomainStrategy"`
 	FallBackConfigs          *FallBackConfigForSing `json:"FallBackConfigs"`
