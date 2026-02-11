@@ -5,9 +5,10 @@ import (
 )
 
 type SingConfig struct {
-	LogConfig    SingLogConfig `json:"Log"`
-	NtpConfig    SingNtpConfig `json:"NTP"`
-	OriginalPath string        `json:"OriginalPath"`
+	LogConfig           SingLogConfig `json:"Log"`
+	NtpConfig           SingNtpConfig `json:"NTP"`
+	OriginalPath        string        `json:"OriginalPath"`
+	OriginalPathRefresh int           `json:"OriginalPathRefresh"`
 }
 
 type SingLogConfig struct {
