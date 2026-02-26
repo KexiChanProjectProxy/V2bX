@@ -5,12 +5,9 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/netip"
-	"net/url"
 	"strconv"
 	"strings"
 	"time"
-
-	"encoding/json"
 
 	"github.com/InazumaV/V2bX/api/panel"
 	"github.com/InazumaV/V2bX/conf"
@@ -18,37 +15,6 @@ import (
 	F "github.com/sagernet/sing/common/format"
 	"github.com/sagernet/sing/common/json/badoption"
 )
-
-type HttpNetworkConfig struct {
-	Header struct {
-		Type     string           `json:"type"`
-		Request  *json.RawMessage `json:"request"`
-		Response *json.RawMessage `json:"response"`
-	} `json:"header"`
-}
-
-type HttpRequest struct {
-	Version string   `json:"version"`
-	Method  string   `json:"method"`
-	Path    []string `json:"path"`
-	Headers struct {
-		Host []string `json:"Host"`
-	} `json:"headers"`
-}
-
-type WsNetworkConfig struct {
-	Path    string            `json:"path"`
-	Headers map[string]string `json:"headers"`
-}
-
-type GrpcNetworkConfig struct {
-	ServiceName string `json:"serviceName"`
-}
-
-type HttpupgradeNetworkConfig struct {
-	Path string `json:"path"`
-	Host string `json:"host"`
-}
 
 func getInboundOptions(tag string, info *panel.NodeInfo, c *conf.Options) (option.Inbound, error) {
 	addr, err := netip.ParseAddr(c.ListenIP)
@@ -122,115 +88,6 @@ func getInboundOptions(tag string, info *panel.NodeInfo, c *conf.Options) (optio
 		Tag: tag,
 	}
 	switch info.Type {
-	case "vmess", "vless":
-		n := info.VAllss
-		t := option.V2RayTransportOptions{
-			Type: n.Network,
-		}
-		switch n.Network {
-		case "tcp":
-			if len(n.NetworkSettings) != 0 {
-				network := HttpNetworkConfig{}
-				err := json.Unmarshal(n.NetworkSettings, &network)
-				if err != nil {
-					return option.Inbound{}, fmt.Errorf("decode NetworkSettings error: %s", err)
-				}
-				//Todo fix http options
-				if network.Header.Type == "http" {
-					t.Type = network.Header.Type
-					var request HttpRequest
-					if network.Header.Request != nil {
-						err = json.Unmarshal(*network.Header.Request, &request)
-						if err != nil {
-							return option.Inbound{}, fmt.Errorf("decode HttpRequest error: %s", err)
-						}
-						t.HTTPOptions.Host = request.Headers.Host
-						t.HTTPOptions.Path = request.Path[0]
-						t.HTTPOptions.Method = request.Method
-					}
-				} else {
-					t.Type = ""
-				}
-			} else {
-				t.Type = ""
-			}
-		case "ws":
-			var (
-				path    string
-				ed      int
-				headers map[string]badoption.Listable[string]
-			)
-			if len(n.NetworkSettings) != 0 {
-				network := WsNetworkConfig{}
-				err := json.Unmarshal(n.NetworkSettings, &network)
-				if err != nil {
-					return option.Inbound{}, fmt.Errorf("decode NetworkSettings error: %s", err)
-				}
-				var u *url.URL
-				u, err = url.Parse(network.Path)
-				if err != nil {
-					return option.Inbound{}, fmt.Errorf("parse path error: %s", err)
-				}
-				path = u.Path
-				ed, _ = strconv.Atoi(u.Query().Get("ed"))
-				headers = make(map[string]badoption.Listable[string], len(network.Headers))
-				for k, v := range network.Headers {
-					headers[k] = badoption.Listable[string]{
-						v,
-					}
-				}
-			}
-			t.WebsocketOptions = option.V2RayWebsocketOptions{
-				Path:                path,
-				EarlyDataHeaderName: "Sec-WebSocket-Protocol",
-				MaxEarlyData:        uint32(ed),
-				Headers:             headers,
-			}
-		case "grpc":
-			network := GrpcNetworkConfig{}
-			if len(n.NetworkSettings) != 0 {
-				err := json.Unmarshal(n.NetworkSettings, &network)
-				if err != nil {
-					return option.Inbound{}, fmt.Errorf("decode NetworkSettings error: %s", err)
-				}
-			}
-			t.GRPCOptions = option.V2RayGRPCOptions{
-				ServiceName: network.ServiceName,
-			}
-		case "httpupgrade":
-			network := HttpupgradeNetworkConfig{}
-			if len(n.NetworkSettings) != 0 {
-				err := json.Unmarshal(n.NetworkSettings, &network)
-				if err != nil {
-					return option.Inbound{}, fmt.Errorf("decode NetworkSettings error: %s", err)
-				}
-			}
-			t.HTTPUpgradeOptions = option.V2RayHTTPUpgradeOptions{
-				Path: network.Path,
-				Host: network.Host,
-			}
-		}
-		if info.Type == "vless" {
-			in.Type = "vless"
-			in.Options = &option.VLESSInboundOptions{
-				ListenOptions: listen,
-				InboundTLSOptionsContainer: option.InboundTLSOptionsContainer{
-					TLS: &tls,
-				},
-				Transport: &t,
-				Multiplex: multiplex,
-			}
-		} else {
-			in.Type = "vmess"
-			in.Options = &option.VMessInboundOptions{
-				ListenOptions: listen,
-				InboundTLSOptionsContainer: option.InboundTLSOptionsContainer{
-					TLS: &tls,
-				},
-				Transport: &t,
-				Multiplex: multiplex,
-			}
-		}
 	case "shadowsocks":
 		in.Type = "shadowsocks"
 		n := info.Shadowsocks
@@ -259,113 +116,11 @@ func getInboundOptions(tag string, info *panel.NodeInfo, c *conf.Options) (optio
 			Password: randomPasswd,
 		}}
 		in.Options = ssoption
-	case "trojan":
-		n := info.Trojan
-		t := option.V2RayTransportOptions{
-			Type: n.Network,
-		}
-		switch n.Network {
-		case "tcp":
-			t.Type = ""
-		case "ws":
-			var (
-				path    string
-				ed      int
-				headers map[string]badoption.Listable[string]
-			)
-			if len(n.NetworkSettings) != 0 {
-				network := WsNetworkConfig{}
-				err := json.Unmarshal(n.NetworkSettings, &network)
-				if err != nil {
-					return option.Inbound{}, fmt.Errorf("decode NetworkSettings error: %s", err)
-				}
-				var u *url.URL
-				u, err = url.Parse(network.Path)
-				if err != nil {
-					return option.Inbound{}, fmt.Errorf("parse path error: %s", err)
-				}
-				path = u.Path
-				ed, _ = strconv.Atoi(u.Query().Get("ed"))
-				headers = make(map[string]badoption.Listable[string], len(network.Headers))
-				for k, v := range network.Headers {
-					headers[k] = badoption.Listable[string]{
-						v,
-					}
-				}
-			}
-			t.WebsocketOptions = option.V2RayWebsocketOptions{
-				Path:                path,
-				EarlyDataHeaderName: "Sec-WebSocket-Protocol",
-				MaxEarlyData:        uint32(ed),
-				Headers:             headers,
-			}
-		case "grpc":
-			network := GrpcNetworkConfig{}
-			if len(n.NetworkSettings) != 0 {
-				err := json.Unmarshal(n.NetworkSettings, &network)
-				if err != nil {
-					return option.Inbound{}, fmt.Errorf("decode NetworkSettings error: %s", err)
-				}
-			}
-			t.GRPCOptions = option.V2RayGRPCOptions{
-				ServiceName: network.ServiceName,
-			}
-		default:
-			t.Type = ""
-		}
-		in.Type = "trojan"
-		trojanoption := &option.TrojanInboundOptions{
-			ListenOptions: listen,
-			InboundTLSOptionsContainer: option.InboundTLSOptionsContainer{
-				TLS: &tls,
-			},
-			Transport: &t,
-			Multiplex: multiplex,
-		}
-		if c.SingOptions.FallBackConfigs != nil {
-			// fallback handling
-			fallback := c.SingOptions.FallBackConfigs.FallBack
-			fallbackPort, err := strconv.Atoi(fallback.ServerPort)
-			if err == nil {
-				trojanoption.Fallback = &option.ServerOptions{
-					Server:     fallback.Server,
-					ServerPort: uint16(fallbackPort),
-				}
-			}
-			fallbackForALPNMap := c.SingOptions.FallBackConfigs.FallBackForALPN
-			fallbackForALPN := make(map[string]*option.ServerOptions, len(fallbackForALPNMap))
-			if err := processFallback(c, fallbackForALPN); err == nil {
-				trojanoption.FallbackForALPN = fallbackForALPN
-			}
-		}
-		in.Options = trojanoption
-	case "tuic":
-		in.Type = "tuic"
-		tls.ALPN = append(tls.ALPN, "h3")
-		in.Options = &option.TUICInboundOptions{
-			ListenOptions:     listen,
-			CongestionControl: info.Tuic.CongestionControl,
-			ZeroRTTHandshake:  info.Tuic.ZeroRTTHandshake,
-			InboundTLSOptionsContainer: option.InboundTLSOptionsContainer{
-				TLS: &tls,
-			},
-		}
 	case "anytls":
 		in.Type = "anytls"
 		in.Options = &option.AnyTLSInboundOptions{
 			ListenOptions: listen,
 			PaddingScheme: info.AnyTls.PaddingScheme,
-			InboundTLSOptionsContainer: option.InboundTLSOptionsContainer{
-				TLS: &tls,
-			},
-		}
-	case "hysteria":
-		in.Type = "hysteria"
-		in.Options = &option.HysteriaInboundOptions{
-			ListenOptions: listen,
-			UpMbps:        info.Hysteria.UpMbps,
-			DownMbps:      info.Hysteria.DownMbps,
-			Obfs:          info.Hysteria.Obfs,
 			InboundTLSOptionsContainer: option.InboundTLSOptionsContainer{
 				TLS: &tls,
 			},
