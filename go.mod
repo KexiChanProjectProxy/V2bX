@@ -1,8 +1,6 @@
 module github.com/InazumaV/V2bX
 
-go 1.25
-
-toolchain go1.25.0
+go 1.25.0
 
 require (
 	github.com/beevik/ntp v1.4.4-0.20240716062501-06ef196b89ec
@@ -16,7 +14,7 @@ require (
 	github.com/spf13/cobra v1.10.2
 	github.com/vmihailenco/msgpack/v5 v5.4.1
 	golang.org/x/crypto v0.48.0
-	golang.org/x/sys v0.41.0
+	golang.org/x/sys v0.43.0
 )
 
 require (
